@@ -228,6 +228,18 @@ def login_register_employer():
 
 @app.route("/home")
 def home() :
+    if session :
+        list1 = []
+        list2 = []
+        templates = root.child('template').get()
+        for saves in templates :
+            template = templates[saves]
+            if template['user'] == session['data']['username'] :
+                list1.append(template['name'])
+                list2.append(template['html'])
+        templatedata = zip(list1, list2)
+        dictionary = dict(templatedata)
+        session['templates'] = dictionary
     return render_template('home.htm')
 
 #Route to messenger
@@ -257,6 +269,30 @@ def logout() :
     session['loggedin'] = False
     return redirect(url_for('main'))
 
+@app.route('/loadtemplate/<name>')
+def loadtemplate(name) :
+    templates = root.child('template').get()
+    for saves in templates :
+        template = templates[saves]
+        if template['name'] == name :
+            session['template'] = {
+                'css' : template['css'],
+                'html' : template['html']
+            }
+    return redirect(url_for('editor'))
+
+@app.route('/editor')
+def editor() :
+    return render_template('editor.html')
+
+@app.route('/savetemplate')
+def savetemplate() :
+    data_db = root.child('template')
+    data_db.push({
+        "user" : session['data']['username'],
+    })
+    flash('You Have Successfully Saved Your Template.')
+    return redirect(url_for('editor'))
 
 @socketio.on( 'my event' )
 def handle_my_custom_event( json ):

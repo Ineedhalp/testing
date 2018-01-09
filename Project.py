@@ -240,7 +240,7 @@ def home() :
         templatedata = zip(list1, list2)
         dictionary = dict(templatedata)
         session['templates'] = dictionary
-    return render_template('home.htm')
+    return render_template('home.html')
 
 #Route to messenger
 @app.route( '/messages' )
@@ -283,6 +283,7 @@ def loadtemplate(name) :
 
 @app.route('/editor')
 def editor() :
+    print(session['template'])
     return render_template('editor.html')
 
 @app.route('/savetemplate')
